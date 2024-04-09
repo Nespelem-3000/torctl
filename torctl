@@ -104,6 +104,12 @@ check_backup_dir() {
     fi
 }
 
+# bridge hook
+# if the file named let's say 'bridgectl' exists in the subdirectory 'torctl' of '/usr/etc/',
+# include a snippet with configurations for bridges.
+# Otherwise nothing changes
+[[ -f "/usr/etc/torctl/bridgectl" ]] && BRIDGECTL="/usr/etc/torctl/bridgectl" && source $BRIDGECTL
+
 start_service() {
     SERVICE=${@}
     if [[ $(systemctl is-active $SERVICE) != "active" ]]; then
@@ -257,6 +263,7 @@ MaxCircuitDirtiness 600
 MaxClientCircuitsPending 48
 UseEntryGuards 1
 EnforceDistinctSubnets 1
+$USE_BRIDGES
 EOF
     chmod 644 ${TORRC}
     msg "configured tor"
@@ -435,6 +442,11 @@ start() {
 
     # flush iptables rules
     flush_iptables
+
+    # configure the 'UseBridges' part of the torrc file,
+    # provided that the file, bound to the variable 'BRIDGECTL' exists,
+    # otherwise do nothing
+    [[ -f $BRIDGECTL ]] && conf_bridges || :
 
     # generate new torrc
     gen_torrc
