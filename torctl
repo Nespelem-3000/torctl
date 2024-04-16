@@ -105,7 +105,7 @@ check_backup_dir() {
 }
 
 # bridge hook
-# if the file named let's say 'bridgectl' exists in the subdirectory 'torctl' of '/usr/etc/',
+# if the file 'bridgectl' exists in the subdirectory 'torctl' of '/usr/etc/',
 # include a snippet with configurations for bridges.
 # Otherwise nothing changes
 [[ -f "/usr/etc/torctl/bridgectl" ]] && BRIDGECTL="/usr/etc/torctl/bridgectl" && source $BRIDGECTL
